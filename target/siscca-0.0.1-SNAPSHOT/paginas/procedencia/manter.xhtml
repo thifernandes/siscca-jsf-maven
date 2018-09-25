@@ -1,0 +1,90 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	template="../layoutPrincipal.xhtml">
+	
+	<ui:param value="Procedência" name="textoTituloPagina" />
+	
+	<ui:define name="conteudo">
+		<p:panel style="width:50%;">
+			<h:form id="formConsulta">
+				<p:focus for="nomeConsulta" />
+				<p:panelGrid>
+					<p:row>
+						<p:column style="width:50px">
+							<p:outputLabel value="Nome:" for="nomeConsulta" />
+						</p:column>
+						<p:column>
+							<p:inputText value="#{procedenciaController.nome}" id="nomeConsulta" maxlength="30" size="50" />
+						</p:column>
+					</p:row>
+				</p:panelGrid>
+				<br />
+				<h:panelGroup layout="block" style="text-align:right">
+					<h:commandButton value="PESQUISAR" action="#{procedenciaController.pesquisar}" update="datatable" onclick="PF('statusDialog').show()" />
+				</h:panelGroup>
+				<br />
+				<br />
+				<p:dataTable id="datatable" var="objeto" rowIndexVar="rowIndex" value="#{procedenciaController.lista}" paginator="true"
+					paginatorAlwaysVisible="false" paginatorPosition="bottom" lazy="true" rows="10" emptyMessage="Nenhuma procedência localizada.">
+					<p:ajax event="page" onstart="PF('statusDialog').show()" onsuccess="PF('statusDialog').hide()" onerror="redirecionarPaginaLogin()" />
+					<p:column headerText="Nome">
+						<p:commandLink onclick="PF('modal').show()">
+							<h:outputText value="#{objeto.nome}" />
+							<p:ajax listener="#{procedenciaController.carregarDados(objeto.id)}" update="formModal" onerror="redirecionarPaginaLogin()" />
+						</p:commandLink>
+					</p:column>
+					<p:column headerText="Excluir" style="width:60px; text-align:center">
+						<p:commandLink onclick="PF('alertExcluir').show()">
+							<p:graphicImage library="imagens" name="botoes/excluirRegistro.png" width="20" height="20" />
+							<f:setPropertyActionListener target="#{procedenciaController.id}" value="#{objeto.id}" />
+						</p:commandLink>
+	
+						<p:confirmDialog message="Deseja realmente excluir a procedência selecionada?" header="Exclusão de Procedência" severity="alert"
+							widgetVar="alertExcluir">
+							<center>
+								<h:commandButton value="SIM">
+									<p:ajax listener="#{procedenciaController.excluir}" process="formConsulta" update="formConsulta" onsuccess="PF('alertExcluir').hide()" 
+										immediate="true" onerror="redirecionarPaginaLogin()" />
+								</h:commandButton>
+								<p:spacer width="10" />
+								<h:commandButton value="NÃO" onclick="PF('alertExcluir').hide()" type="button" />
+							</center>
+						</p:confirmDialog>
+					</p:column>
+				</p:dataTable>
+				<br />
+				<h:commandButton value="INCLUIR">
+					<p:ajax listener="#{procedenciaController.limparDados}" update="formModal" oncomplete="PF('modal').show()" onerror="redirecionarPaginaLogin()" />
+				</h:commandButton>
+			</h:form>
+		</p:panel>
+		
+		<p:dialog widgetVar="modal" header="Cadastro de Procedência" modal="true" width="400px">
+			<h:form id="formModal">
+				<p:messages id="mensagensCadastro" />
+				<p:focus for="nomeCadastro" />
+				<p:panelGrid>
+					<p:row>
+						<p:column>
+							<p:outputLabel value="Nome:" for="nomeCadastro" />
+						</p:column>
+						<p:column>
+							<p:inputText value="#{procedenciaController.nomeModal}" id="nomeCadastro" required="true" maxlength="40" style="width:300px" />
+						</p:column>
+					</p:row>
+				</p:panelGrid>
+				<br />
+				<h:panelGroup layout="block" style="text-align:right">
+					<h:commandButton value="SALVAR">
+						<p:ajax listener="#{procedenciaController.salvar}" process="formModal" update="mensagensCadastro formConsulta" onerror="redirecionarPaginaLogin()" />
+					</h:commandButton>
+					<p:spacer width="10" />
+					<h:commandButton value="FECHAR" type="button" onclick="PF('modal').hide();" />
+				</h:panelGroup>
+			</h:form>
+		</p:dialog>
+	</ui:define>
+</ui:composition>

@@ -1,0 +1,1010 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	template="../layoutPrincipal.xhtml">
+	
+	<ui:param value="Prontuário - #{prontuarioController.prontuario.pessoa.nomePessoa}" name="textoTituloPagina" />
+	
+	<f:metadata>
+		<f:viewParam name="idProntuario" value="#{prontuarioController.idProntuario}" />
+ 		<f:event listener="#{prontuarioController.init}" type="preRenderView" />
+	</f:metadata>
+	
+	<ui:define name="conteudo">
+		
+		<p:tabView id="tb" orientation="left" binding="#{prontuarioController.tabView}">
+			<p:ajax event="tabChange" listener="#{prontuarioController.carregarListaTabs}" onstart="PF('statusDialog').show()"
+				onsuccess="PF('statusDialog').hide()" onerror="redirecionarPaginaLogin()" oncomplete="verificarErrosPosPhase()" />
+		
+			<p:tab title="Prontuário">
+				<h:form id="formDadosPessoais">
+					<p:remoteCommand id="verificarErrosPosPhase" name="verificarErrosPosPhase" update="mensagens" actionListener="#{prontuarioController.verificarErroPesquisa}" />
+					
+					<p:panel id="panel" header="Dados do Prontuário" style="width:100%;">
+						<p:panelGrid cellpadding="5">
+							<p:row>
+								<p:column style="text-align:right">
+									<p:outputLabel value="Nome:" for="nome" />
+								</p:column>
+								<p:column>
+									<p:inputText value="#{prontuarioController.prontuario.pessoa.nomePessoa}" id="nome" required="true" style="width:320px" maxlength="180" 
+										readonly="#{acessoMenuController.perfilConsulta}" />
+								</p:column>
+								<p:column style="width:150px; text-align:right">
+									<p:outputLabel value="Sexo:" for="sexo" />
+								</p:column>
+								<p:column>
+									<ui:fragment rendered="#{!acessoMenuController.perfilConsulta}">
+										<p:selectOneMenu label="Sexo" id="sexo" required="true" value="#{prontuarioController.prontuario.pessoa.sexo}" style="width: 80px">
+											<f:selectItem itemLabel="---" noSelectionOption="true" />
+											<f:selectItem itemLabel="M" itemValue="M" />
+											<f:selectItem itemLabel="F" itemValue="F" />
+										</p:selectOneMenu>
+									</ui:fragment>
+									<ui:fragment rendered="#{acessoMenuController.perfilConsulta}">
+										<p:inputText value="#{prontuarioController.prontuario.pessoa.sexo}" style="width:80px" readonly="true" />
+									</ui:fragment>
+								</p:column>
+							</p:row>
+							
+							<p:row>
+								<p:column style="text-align:right">
+									<p:outputLabel value="Nome Mãe:" for="nomeMae" />
+								</p:column>
+								<p:column>
+									<p:inputText value="#{prontuarioController.prontuario.pessoa.nomeMae}" id="nomeMae" style="width:320px;" maxlength="180" 
+										readonly="#{acessoMenuController.perfilConsulta}" />
+								</p:column>
+								<p:column style="text-align:right">
+									<p:outputLabel value="Certidão Nasc.:" for="certidaoNascimento" />
+								</p:column>
+								<p:column>
+									<p:inputText value="#{prontuarioController.prontuario.pessoa.certidaoNascimento}" id="certidaoNascimento" maxlength="30" style="width:110px" readonly="#{acessoMenuController.perfilConsulta}" />
+								</p:column>
+							</p:row>
+							
+							<p:row>
+								<p:column style="text-align:right">
+									<p:outputLabel value="Nome Pai:" for="nomePai" />
+								</p:column>
+								<p:column>
+									<p:inputText value="#{prontuarioController.prontuario.pessoa.nomePai}" id="nomePai" style="width:320px;" maxlength="180" 
+										readonly="#{acessoMenuController.perfilConsulta}" />
+								</p:column>
+								<p:column style="text-align:right">
+									<p:outputLabel value="RG:" for="rg" />
+								</p:column>
+								<p:column>
+									<p:inputText value="#{prontuarioController.prontuario.pessoa.rg}" id="rg" style="width:110px" readonly="#{acessoMenuController.perfilConsulta}" />
+								</p:column>
+							</p:row>
+							
+							<p:row>
+								<p:column style="text-align:right">
+									<p:outputLabel value="Família Extensa:" for="familiaExtensa" />
+								</p:column>
+								<p:column>
+									<p:inputText value="#{prontuarioController.prontuario.pessoa.familiaExtensa}" id="familiaExtensa" style="width:320px;" maxlength="180" 
+										readonly="#{acessoMenuController.perfilConsulta}" />
+								</p:column>
+								<p:column style="text-align:right">
+									<p:outputLabel value="CPF:" for="cpf" />
+								</p:column>
+								<p:column>
+									<p:inputMask value="#{prontuarioController.prontuario.pessoa.cpf}" mask="999.999.999-99" id="cpf" style="width:110px" readonly="#{acessoMenuController.perfilConsulta}" />
+								</p:column>
+							</p:row>
+							
+							<p:row>
+								<p:column style="text-align:right">
+									<p:outputLabel value="Data Nascimento:" for="dtNasc" />
+								</p:column>
+								<p:column colspan="3">
+									<p:inputMask mask="99/99/9999" value="#{prontuarioController.prontuario.pessoa.dataNascimento}" id="dtNasc" 
+										style="width:100px" readonly="#{acessoMenuController.perfilConsulta}" />
+								</p:column>
+							</p:row>
+							
+							<p:row>
+								<p:column style="text-align:right">
+									<p:outputLabel value="UF Naturalidade:" for="ufNaturalidade" />
+								</p:column>
+								<p:column>
+									<ui:fragment rendered="#{!acessoMenuController.perfilConsulta}">
+										<p:selectOneMenu id="ufNaturalidade" style="width: 70px;" value="#{prontuarioController.prontuario.pessoa.cidadeNaturalidade.uf}">
+											<f:selectItem itemLabel="---" noSelectionOption="true" />
+											<f:selectItems value="#{prontuarioController.listaUfsNaturalidade}" var="ufNat" itemValue="#{ufNat}" itemLabel="#{ufNat.siglaUf}" />
+											<p:ajax render="cidadeNaturalidade" listener="#{prontuarioController.recuperarListaCidadesNaturalidade}" update="cidadeNaturalidade" />
+										</p:selectOneMenu>
+									</ui:fragment>
+									<ui:fragment rendered="#{acessoMenuController.perfilConsulta}">
+										<p:inputText value="#{prontuarioController.prontuario.pessoa.cidadeNaturalidade.uf.siglaUf}" style="width:70px" readonly="true" />
+									</ui:fragment>
+								</p:column>
+								<p:column style="text-align:right">
+									<p:outputLabel value="Cidade Nat.:" for="cidadeNaturalidade" />
+								</p:column>
+								<p:column>
+									<ui:fragment rendered="#{!acessoMenuController.perfilConsulta}">
+										<p:selectOneMenu id="cidadeNaturalidade" value="#{prontuarioController.prontuario.pessoa.cidadeNaturalidade}" style="width:180px">
+											<f:selectItem itemLabel="---" noSelectionOption="true" />
+											<f:selectItems value="#{prontuarioController.listaCidadesNaturalidade}" var="cidade" itemLabel="#{cidade.nome}" itemValue="#{cidade}" />
+										</p:selectOneMenu>
+									</ui:fragment>
+									<ui:fragment rendered="#{acessoMenuController.perfilConsulta}">
+										<p:inputText value="#{prontuarioController.prontuario.pessoa.cidadeNaturalidade.nome}" style="width:322px" readonly="true" />
+									</ui:fragment>
+								</p:column>
+							</p:row>
+							
+							<p:row>
+								<p:column style="text-align:right">
+									<p:outputLabel value="Grau de Instrução:" for="grauInstrucao" />
+								</p:column>
+								<p:column>
+									<ui:fragment rendered="#{!acessoMenuController.perfilConsulta}">
+										<p:selectOneMenu id="grauInstrucao" value="#{prontuarioController.prontuario.pessoa.grauInstrucao}" style="width:160px">
+											<f:selectItem itemLabel="---" noSelectionOption="true" />
+											<f:selectItems value="#{prontuarioController.listaGrausInstrucao}" var="grau" itemLabel="#{grau.nome}" itemValue="#{grau}" />
+										</p:selectOneMenu>
+									</ui:fragment>
+									<ui:fragment rendered="#{acessoMenuController.perfilConsulta}">
+										<p:inputText value="#{prontuarioController.prontuario.pessoa.grauInstrucao.nome}" style="width:290px" readonly="true" />
+									</ui:fragment>
+								</p:column>
+								<p:column style="text-align:right">
+									<p:outputLabel value="Escola:" for="escola" />
+								</p:column>
+								<p:column>
+									<p:inputText value="#{prontuarioController.prontuario.pessoa.nomeEscola}" id="escola" style="width:210px" maxlength="180" 
+										readonly="#{acessoMenuController.perfilConsulta}" />
+								</p:column>
+							</p:row>
+							
+							<p:row>
+								<p:column style="text-align:right">
+									<p:outputLabel value="Nº. Prontuário:" for="numeroProntuario" />
+								</p:column>
+								<p:column>
+									<p:inputText value="#{prontuarioController.prontuario.numeroProntuario}" id="numeroProntuario" style="width:110px;" maxlength="25" 
+										readonly="#{acessoMenuController.perfilConsulta}" />
+								</p:column>
+								<p:column style="text-align:right">
+									<p:outputLabel value="Nº. Ofício:" for="numeroOficio" />
+								</p:column>
+								<p:column>
+									<p:inputNumber value="#{prontuarioController.prontuario.pessoa.numeroOficio}" id="numeroOficio" style="width:110px;" maxlength="25" 
+										thousandSeparator="" decimalSeparator="." decimalPlaces="0" readonly="#{acessoMenuController.perfilConsulta}" />
+								</p:column>
+							</p:row>
+								
+							<p:row>
+								<p:column style="text-align:right">
+									<p:outputLabel value="Nº. Autos:" for="numeroAutos" />
+								</p:column>
+								<p:column>
+									<p:inputNumber value="#{prontuarioController.prontuario.pessoa.numeroAutos}" id="numeroAutos" style="width:110px;" maxlength="25" 
+										thousandSeparator="" decimalSeparator="." decimalPlaces="0" readonly="#{acessoMenuController.perfilConsulta}" />
+								</p:column>
+								<p:column style="text-align:right">
+									<p:outputLabel value="Nº. Guia Acolhim.:" for="numeroGuiaAcolhimento" />
+								</p:column>
+								<p:column>
+									<p:inputNumber value="#{prontuarioController.prontuario.pessoa.numeroGuiaAcolhimento}" id="numeroGuiaAcolhimento" style="width:110px;" maxlength="25" 
+										thousandSeparator="" decimalSeparator="." decimalPlaces="0" readonly="#{acessoMenuController.perfilConsulta}" />
+								</p:column>
+							</p:row>
+							
+							<p:row>
+								<p:column style="text-align:right">
+									<p:outputLabel value="Endereço:" for="endereco" />
+								</p:column>
+								<p:column colspan="3">
+									<p:inputText value="#{prontuarioController.prontuario.pessoa.endereco}" id="endereco" style="width:320px;" maxlength="180" 
+										readonly="#{acessoMenuController.perfilConsulta}" />
+								</p:column>
+							</p:row>
+							
+							<p:row>
+								<p:column style="text-align:right">
+									<p:outputLabel value="UF Endereço:" for="ufEndereco" />
+								</p:column>
+								<p:column>
+									<ui:fragment rendered="#{!acessoMenuController.perfilConsulta}">
+										<p:selectOneMenu id="ufEndereco" style="width:70px;" value="#{prontuarioController.prontuario.pessoa.cidadeEndereco.uf}">
+											<f:selectItem itemLabel="---" noSelectionOption="true" />
+											<f:selectItems value="#{prontuarioController.listaUfsEndereco}" var="ufEnd" itemValue="#{ufEnd}" itemLabel="#{ufEnd.siglaUf}" />
+											<p:ajax render="cidadeEndereco" listener="#{prontuarioController.recuperarListaCidadesEndereco}" update="cidadeEndereco" />
+										</p:selectOneMenu>
+									</ui:fragment>
+									<ui:fragment rendered="#{acessoMenuController.perfilConsulta}">
+										<p:inputText value="#{prontuarioController.prontuario.pessoa.cidadeEndereco.uf.siglaUf}" style="width:70px" readonly="true" />
+									</ui:fragment>
+								</p:column>
+								<p:column style="text-align:right">
+									<p:outputLabel value="Cidade Endereço:" for="cidadeEndereco" />
+								</p:column>
+								<p:column style="text-align:right">
+									<ui:fragment rendered="#{!acessoMenuController.perfilConsulta}">
+										<p:selectOneMenu id="cidadeEndereco" value="#{prontuarioController.prontuario.pessoa.cidadeEndereco}" style="width:180px">
+											<f:selectItem itemLabel="---" noSelectionOption="true" />
+											<f:selectItems value="#{prontuarioController.listaCidadesEndereco}" var="cidadeEnd" itemLabel="#{cidadeEnd.nome}" itemValue="#{cidadeEnd}" />
+										</p:selectOneMenu>
+									</ui:fragment>
+									<ui:fragment rendered="#{acessoMenuController.perfilConsulta}">
+										<p:inputText value="#{prontuarioController.prontuario.pessoa.cidadeEndereco.nome}" style="width:322px" readonly="true" />
+									</ui:fragment>
+								</p:column>
+							</p:row>
+							
+							<p:row>
+								<p:column style="text-align:right">
+									<p:outputLabel value="Rede de Referência:" for="redeReferencia" />
+								</p:column>
+								<p:column colspan="3" style="padding:0px;">
+									<p:panelGrid>
+										<p:row>
+											<p:column style="width:230px;">
+												<ui:fragment rendered="#{!acessoMenuController.perfilConsulta}">
+													<p:selectOneMenu id="redeReferencia" value="#{prontuarioController.prontuario.pessoa.redeReferencia}" style="width:160px">
+														<f:selectItem itemLabel="---" noSelectionOption="true" />
+														<f:selectItems value="#{prontuarioController.listaRedesReferencia}" var="rede" itemLabel="#{rede.nome}" itemValue="#{rede}" />
+													</p:selectOneMenu>
+												</ui:fragment>
+												<ui:fragment rendered="#{acessoMenuController.perfilConsulta}">
+													<p:inputText value="#{prontuarioController.prontuario.pessoa.redeReferencia.nome}" style="width:290px" readonly="true" />
+												</ui:fragment>
+											</p:column>
+											<p:column style="width:170px; text-align:right">
+												<p:outputLabel value="Possui Deficiência?" for="checkDeficiencia" />
+											</p:column>
+											<p:column>
+												<p:selectBooleanCheckbox
+													value="#{prontuarioController.possuiDeficiencia}" id="checkDeficiencia" label="Possui Deficiência?" disabled="#{acessoMenuController.perfilConsulta}">
+													<p:ajax render="deficiencia" listener="#{prontuarioController.carregarListaDeficiencias}" update="deficiencia" />
+												</p:selectBooleanCheckbox>
+											</p:column>
+											<p:column style="width:20px; text-align:right">
+												<p:outputLabel value="Qual?" for="deficiencia" />
+											</p:column>
+											<p:column style="width:200px; text-align:right">
+												<p:selectOneMenu label="Tipo de Deficiência" value="#{prontuarioController.prontuario.pessoa.deficiencia.id}" id="deficiencia" 
+													required="#{prontuarioController.possuiDeficiencia}" disabled="#{!prontuarioController.possuiDeficiencia}" style="width:180px">
+													<f:selectItems value="#{prontuarioController.listaDeficiencias}" var="deficiencia" itemLabel="#{deficiencia.nome}" itemValue="#{deficiencia.id}" />
+												</p:selectOneMenu>
+											</p:column>
+										</p:row>
+									</p:panelGrid>
+								</p:column>
+							</p:row>
+							
+							<p:row>
+								<p:column style="text-align:right">
+									<p:outputLabel value="Prontuário Elaborado por:" for="prontuarioElaborado" />
+								</p:column>
+								<p:column colspan="3">
+									<p:outputLabel value="#{prontuarioController.prontuario.usuarioGerador.nomeMatricula}" id="prontuarioElaborado" style="width:480px;" />
+								</p:column>
+							</p:row>
+						</p:panelGrid>
+					</p:panel>
+					<br />
+					<h:commandButton value="SALVAR" rendered="#{!acessoMenuController.perfilConsulta}">
+						<p:ajax listener="#{prontuarioController.salvarDadosPessoais}" process="formDadosPessoais" update="tb:formDadosPessoais" onerror="redirecionarPaginaLogin()"
+							oncomplete="window.scrollTo(0,0);" />
+					</h:commandButton>
+				</h:form>
+			</p:tab>
+			
+			<p:tab title="Endereços">
+				<h:form id="formEnderecos">
+					<p:remoteCommand id="verificarErrosPosPhase" name="verificarErrosPosPhase" update="mensagens" actionListener="#{prontuarioController.verificarErroPesquisa}" />
+				
+					<p:panel header="Lista de Endereços Cadastrados" style="width:100%;">
+						<br />
+						<p:dataTable id="datatableEndereco" var="endereco" rowIndexVar="rowIndex" value="#{enderecoController.listaEnderecos}" paginator="true" 
+							paginatorAlwaysVisible="false" paginatorPosition="bottom" lazy="true" rows="10" emptyMessage="Não existem endereços cadastrados para esta pessoa.">
+							<p:ajax event="page" onstart="PF('statusDialog').show()" onsuccess="PF('statusDialog').hide()" onerror="redirecionarPaginaLogin()" />
+							
+							<p:column headerText="Data de Registro" style="width:80px; text-align:center">
+								<h:commandLink>
+									<h:outputText value="#{endereco.dataRegistro}">
+										<f:convertDateTime pattern="dd/MM/yyyy" />
+									</h:outputText>
+									<p:ajax listener="#{enderecoController.carregarEndereco(endereco.id)}" process="tb:formEnderecos" update="formCadastroEndereco" onerror="redirecionarPaginaLogin()" />
+								</h:commandLink>
+							</p:column>
+							<p:column headerText="Endereço" style="text-align:center">
+								<h:outputText value="#{endereco.endereco}" />
+							</p:column>
+							<p:column headerText="Excluir" style="width:60px; text-align:center" rendered="#{!acessoMenuController.perfilConsulta}">
+								<p:commandLink onclick="PF('alertExcluirEndereco').show()">
+									<p:graphicImage library="imagens" name="botoes/excluirRegistro.png" width="20" height="20" />
+									<f:setPropertyActionListener target="#{enderecoController.endereco}" value="#{endereco}" />
+								</p:commandLink>
+			
+								<p:confirmDialog message="Deseja realmente excluir o endereço selecionado?" header="Exclusão de Endereço" severity="alert" widgetVar="alertExcluirEndereco">
+									<center>
+										<h:commandButton value="SIM">
+											<p:ajax listener="#{enderecoController.excluir}" process="tb:formEnderecos" update="tb:formEnderecos" onsuccess="PF('alertExcluirEndereco').hide()" onerror="redirecionarPaginaLogin()" />
+										</h:commandButton>
+										<p:spacer width="10" />
+										<h:commandButton value="NÃO" onclick="PF('alertExcluirEndereco').hide()" type="button" />
+									</center>
+								</p:confirmDialog>
+							</p:column>
+						</p:dataTable>
+					</p:panel>
+					<br />
+					<h:commandButton value="NOVO ENDEREÇO" disabled="#{prontuarioController.prontuario == null}" rendered="#{!acessoMenuController.perfilConsulta}">
+						<p:ajax listener="#{enderecoController.cadastrarNovo}" update="formCadastroEndereco" onerror="redirecionarPaginaLogin()" />
+					</h:commandButton>
+				</h:form>
+			</p:tab>
+			
+			<p:tab title="Contatos">
+				<h:form id="formContatos">
+					<p:remoteCommand id="verificarErrosPosPhase" name="verificarErrosPosPhase" update="mensagens" actionListener="#{prontuarioController.verificarErroPesquisa}" />
+				
+					<p:panel header="Lista de Contatos Cadastrados" style="width:100%;">
+						<br />
+						<p:dataTable id="datatableContato" var="contato" rowIndexVar="rowIndex" value="#{contatoController.listaContatos}" paginator="true" 
+							paginatorAlwaysVisible="false" paginatorPosition="bottom" lazy="true" rows="10" emptyMessage="Não existem contatos cadastrados para esta pessoa.">
+							<p:ajax event="page" onstart="PF('statusDialog').show()" onsuccess="PF('statusDialog').hide()" onerror="redirecionarPaginaLogin()" />
+							
+							<p:column headerText="Telefone" style="width:120px; text-align:center">
+								<h:commandLink>
+									<h:outputText value="#{contato.telefone}" />
+									<p:ajax listener="#{contatoController.carregarContato(contato.id)}" process="tb:formContatos" update="formCadastroContato" onerror="redirecionarPaginaLogin()" />
+								</h:commandLink>
+							</p:column>
+							<p:column headerText="Nome de Contato" style="text-align:center">
+								<h:outputText value="#{contato.nomeContato}" />
+							</p:column>
+							<p:column headerText="Observações" style="text-align:center">
+								<h:outputText value="#{contato.observacoes}" />
+							</p:column>
+							<p:column headerText="Excluir" style="width:60px; text-align:center" rendered="#{!acessoMenuController.perfilConsulta}">
+								<p:commandLink onclick="PF('alertExcluirContato').show()">
+									<p:graphicImage library="imagens" name="botoes/excluirRegistro.png" width="20" height="20" />
+									<f:setPropertyActionListener target="#{contatoController.contato}" value="#{contato}" />
+								</p:commandLink>
+			
+								<p:confirmDialog message="Deseja realmente excluir o contato selecionado?" header="Exclusão de Contato" severity="alert" widgetVar="alertExcluirContato">
+									<center>
+										<h:commandButton value="SIM">
+											<p:ajax listener="#{contatoController.excluir}" process="tb:formContatos" update="tb:formContatos" onsuccess="PF('alertExcluirContato').hide()" onerror="redirecionarPaginaLogin()" />
+										</h:commandButton>
+										<p:spacer width="10" />
+										<h:commandButton value="NÃO" onclick="PF('alertExcluirContato').hide()" type="button" />
+									</center>
+								</p:confirmDialog>
+							</p:column>
+						</p:dataTable>
+					</p:panel>
+					<br />
+					<h:commandButton value="NOVO CONTATO" disabled="#{prontuarioController.prontuario == null}" rendered="#{!acessoMenuController.perfilConsulta}">
+						<p:ajax listener="#{contatoController.cadastrarNovo}" update="formCadastroContato" onerror="redirecionarPaginaLogin()" />
+					</h:commandButton>
+				</h:form>
+			</p:tab>
+			
+			<p:tab title="Admissões">
+				<h:form id="formAdmissoes">
+					<p:remoteCommand id="verificarErrosPosPhase" name="verificarErrosPosPhase" update="mensagens" actionListener="#{prontuarioController.verificarErroPesquisa}" />
+				
+					<p:panel header="Lista de Admissões Cadastradas" style="width:100%;">
+						<br />
+						<p:dataTable id="datatableAdmissao" var="admissao" rowIndexVar="rowIndex" value="#{admissaoController.listaAdmissoes}" paginator="true"
+							paginatorAlwaysVisible="false" paginatorPosition="bottom" lazy="true" rows="10" emptyMessage="Não existem admissões cadastradas para esta pessoa.">
+							<p:ajax event="page" onstart="PF('statusDialog').show()" onsuccess="PF('statusDialog').hide()" onerror="redirecionarPaginaLogin()" />
+							
+							<p:column headerText="Data de Registro" style="width:80px; text-align:center">
+								<h:commandLink>
+									<h:outputText value="#{admissao.dataRegistro}">
+										<f:convertDateTime pattern="dd/MM/yyyy" />
+									</h:outputText>
+									<p:ajax listener="#{admissaoController.carregarAdmissao(admissao.id)}" process="tb:formAdmissoes" update="formCadastroAdmissao" onerror="redirecionarPaginaLogin()" />
+								</h:commandLink>
+							</p:column>
+							<p:column headerText="Motivo de Admissão" style="text-align:center">
+								<h:outputText value="#{admissao.motivoAdmissao.nome}" />
+							</p:column>
+							<p:column headerText="Procedência" style="text-align:center">
+								<h:outputText value="#{admissao.procedencia.nome}" />
+							</p:column>
+							<p:column headerText="Observações" style="text-align:center">
+								<h:outputText value="#{admissao.observacoesDataTable}" />
+							</p:column>
+							<p:column headerText="Excluir" style="width:60px; text-align:center" rendered="#{!acessoMenuController.perfilConsulta}">
+								<p:commandLink onclick="PF('alertExcluirAdmissao').show()">
+									<p:graphicImage library="imagens" name="botoes/excluirRegistro.png" width="20" height="20" />
+									<f:setPropertyActionListener target="#{admissaoController.admissao}" value="#{admissao}" />
+								</p:commandLink>
+			
+								<p:confirmDialog message="Deseja realmente excluir a admissão selecionada?" header="Exclusão de Admissão" severity="alert" widgetVar="alertExcluirAdmissao">
+									<center>
+										<h:commandButton value="SIM">
+											<p:ajax listener="#{admissaoController.excluir}" process="tb:formAdmissoes" update="tb:formAdmissoes" onsuccess="PF('alertExcluirAdmissao').hide()" onerror="redirecionarPaginaLogin()" />
+										</h:commandButton>
+										<p:spacer width="10" />
+										<h:commandButton value="NÃO" onclick="PF('alertExcluirAdmissao').hide()" type="button" />
+									</center>
+								</p:confirmDialog>
+							</p:column>
+						</p:dataTable>
+					</p:panel>
+					<br />
+					<h:commandButton value="NOVA ADMISSÃO" disabled="#{prontuarioController.prontuario == null}" rendered="#{!acessoMenuController.perfilConsulta}">
+						<p:ajax listener="#{admissaoController.cadastrarNova}" update="formCadastroAdmissao" onerror="redirecionarPaginaLogin()" />
+					</h:commandButton>
+				</h:form>
+			</p:tab>
+			
+			<p:tab title="Encaminhamentos">
+				<h:form id="formEncaminhamentos">
+					<p:remoteCommand id="verificarErrosPosPhase" name="verificarErrosPosPhase" update="mensagens" actionListener="#{prontuarioController.verificarErroPesquisa}" />
+				
+					<p:panel header="Lista de Encaminhamentos Cadastrados" style="width:100%;">
+						<br />
+						<p:dataTable id="datatableEncaminhamento" var="encaminhamento" rowIndexVar="rowIndex" value="#{encaminhamentoController.lista}" paginator="true"
+							paginatorAlwaysVisible="false" paginatorPosition="bottom" lazy="true" rows="10" emptyMessage="Não existem encaminhamentos cadastrados para esta pessoa.">
+							<p:ajax event="page" onstart="PF('statusDialog').show()" onsuccess="PF('statusDialog').hide()" onerror="redirecionarPaginaLogin()" />
+							
+							<p:column headerText="Data de Registro" style="width:80px; text-align:center">
+								<h:commandLink>
+									<h:outputText value="#{encaminhamento.dataRegistro}">
+										<f:convertDateTime pattern="dd/MM/yyyy" />
+									</h:outputText>
+									<p:ajax listener="#{encaminhamentoController.carregar(encaminhamento.id)}" process="tb:formEncaminhamentos" update="formCadastroEncaminhamento" onerror="redirecionarPaginaLogin()" />
+								</h:commandLink>
+							</p:column>
+							<p:column headerText="Motivo de Admissão" style="text-align:center">
+								<h:outputText value="#{encaminhamento.motivoAdmissao.nome}" />
+							</p:column>
+							<p:column headerText="Procedência" style="text-align:center">
+								<h:outputText value="#{encaminhamento.procedencia.nome}" />
+							</p:column>
+							<p:column headerText="Observações" style="text-align:center">
+								<h:outputText value="#{encaminhamento.observacoesDataTable}" />
+							</p:column>
+							<p:column headerText="Excluir" style="width:60px; text-align:center" rendered="#{!acessoMenuController.perfilConsulta}">
+								<p:commandLink onclick="PF('alertExcluirEncaminhamento').show()">
+									<p:graphicImage library="imagens" name="botoes/excluirRegistro.png" width="20" height="20" />
+									<f:setPropertyActionListener target="#{encaminhamentoController.encaminhamento}" value="#{encaminhamento}" />
+								</p:commandLink>
+			
+								<p:confirmDialog message="Deseja realmente excluir o encaminhamento selecionado?" header="Exclusão de Encaminhamento" severity="alert" widgetVar="alertExcluirEncaminhamento">
+									<center>
+										<h:commandButton value="SIM">
+											<p:ajax listener="#{encaminhamentoController.excluir}" process="tb:formEncaminhamentos" update="tb:formEncaminhamentos" onsuccess="PF('alertExcluirEncaminhamento').hide()" onerror="redirecionarPaginaLogin()" />
+										</h:commandButton>
+										<p:spacer width="10" />
+										<h:commandButton value="NÃO" onclick="PF('alertExcluirEncaminhamento').hide()" type="button" />
+									</center>
+								</p:confirmDialog>
+							</p:column>
+						</p:dataTable>
+					</p:panel>
+					<br />
+					<h:commandButton value="NOVO ENCAMINHAMENTO" disabled="#{prontuarioController.prontuario == null}" rendered="#{!acessoMenuController.perfilConsulta}">
+						<p:ajax listener="#{encaminhamentoController.cadastrarNovo}" update="formCadastroEncaminhamento" onerror="redirecionarPaginaLogin()" />
+					</h:commandButton>
+				</h:form>
+			</p:tab>
+			
+			<p:tab title="Referência Familiar">
+				<h:form id="formReferenciaFamiliar">
+					<p:remoteCommand id="verificarErrosPosPhase" name="verificarErrosPosPhase" update="mensagens" actionListener="#{prontuarioController.verificarErroPesquisa}" />
+				
+					<p:panel header="Lista de Referências Familiares Cadastradas" style="width:100%;">
+						<br />
+						<p:dataTable id="datatableReferenciaFamiliar" var="refFamiliar" rowIndexVar="rowIndex" value="#{referenciaFamiliarController.lista}" paginator="true"
+							paginatorAlwaysVisible="false" paginatorPosition="bottom" lazy="true" rows="10" emptyMessage="Não existem referências familiares cadastradas para esta pessoa.">
+							<p:ajax event="page" onstart="PF('statusDialog').show()" onsuccess="PF('statusDialog').hide()" onerror="redirecionarPaginaLogin()" />
+							
+							<p:column headerText="Nome" style="text-align:center">
+								<h:commandLink>
+									<h:outputText value="#{refFamiliar.nome}" />
+									<p:ajax listener="#{referenciaFamiliarController.carregar(refFamiliar.id)}" process="tb:formReferenciaFamiliar" 
+										update="formCadastroReferenciaFamiliar" onerror="redirecionarPaginaLogin()" />
+								</h:commandLink>
+							</p:column>
+							<p:column headerText="Parentesco" style="width:180px; text-align:center">
+								<h:outputText value="#{refFamiliar.tipoParentesco.nome}" />
+							</p:column>
+							<p:column headerText="Data Nascimento" style="width:80px; text-align:center">
+								<h:outputText value="#{refFamiliar.dataNascimento}">
+									<f:convertDateTime pattern="dd/MM/yyyy" />
+								</h:outputText>
+							</p:column>
+							<p:column headerText="Observações" style="text-align:center">
+								<h:outputText value="#{refFamiliar.observacoesDataTable}" />
+							</p:column>
+							<p:column headerText="Excluir" style="width:60px; text-align:center" rendered="#{!acessoMenuController.perfilConsulta}">
+								<p:commandLink onclick="PF('alertExcluirRefFamiliar').show()">
+									<p:graphicImage library="imagens" name="botoes/excluirRegistro.png" width="20" height="20" />
+									<f:setPropertyActionListener target="#{referenciaFamiliarController.referenciaFamiliar}" value="#{refFamiliar}" />
+								</p:commandLink>
+			
+								<p:confirmDialog message="Deseja realmente excluir a referência familiar selecionada?" header="Exclusão de Referência Familiar" severity="alert" widgetVar="alertExcluirRefFamiliar">
+									<center>
+										<h:commandButton value="SIM">
+											<p:ajax listener="#{referenciaFamiliarController.excluir}" process="tb:formReferenciaFamiliar" update="tb:formReferenciaFamiliar" 
+												onsuccess="PF('alertExcluirRefFamiliar').hide()" onerror="redirecionarPaginaLogin()" />
+										</h:commandButton>
+										<p:spacer width="10" />
+										<h:commandButton value="NÃO" onclick="PF('alertExcluirRefFamiliar').hide()" type="button" />
+									</center>
+								</p:confirmDialog>
+							</p:column>
+						</p:dataTable>
+					</p:panel>
+					<br />
+					<h:commandButton value="NOVA REFERÊNCIA FAMILIAR" disabled="#{prontuarioController.prontuario == null}" rendered="#{!acessoMenuController.perfilConsulta}">
+						<p:ajax listener="#{referenciaFamiliarController.cadastrarNova}" update="formCadastroReferenciaFamiliar" onerror="redirecionarPaginaLogin()" />
+					</h:commandButton>
+				</h:form>
+			</p:tab>
+			
+			<p:tab title="Saídas/Evasões">
+				<h:form id="formEvasoes">
+					<p:remoteCommand id="verificarErrosPosPhase" name="verificarErrosPosPhase" update="mensagens" actionListener="#{prontuarioController.verificarErroPesquisa}" />
+					
+					<p:panel header="Lista de Evasões Cadastradas" style="width:100%;">
+						<br />
+						<p:dataTable id="datatableEvasao" var="evasao" rowIndexVar="rowIndex" value="#{evasaoController.lista}" paginator="true"
+							paginatorAlwaysVisible="false" paginatorPosition="bottom" lazy="true" rows="10" emptyMessage="Não existem evasões cadastradas para esta pessoa.">
+							<p:ajax event="page" onstart="PF('statusDialog').show()" onsuccess="PF('statusDialog').hide()" onerror="redirecionarPaginaLogin()" />
+							
+							<p:column headerText="Data de Registro" style="width:80px; text-align:center">
+								<h:commandLink>
+									<h:outputText value="#{evasao.dataRegistro}">
+										<f:convertDateTime pattern="dd/MM/yyyy" />
+									</h:outputText>
+									<p:ajax listener="#{evasaoController.carregar(evasao.id)}" process="tb:formEvasoes" update="formCadastroEvasao" onerror="redirecionarPaginaLogin()" />
+								</h:commandLink>
+							</p:column>
+							<p:column headerText="Motivo da Evasão" style="text-align:center">
+								<h:outputText value="#{evasao.motivoEvasao.nome}" />
+							</p:column>
+							<p:column headerText="Observações" style="text-align:center">
+								<h:outputText value="#{evasao.observacoesDataTable}" />
+							</p:column>
+							<p:column headerText="Excluir" style="width:60px; text-align:center" rendered="#{!acessoMenuController.perfilConsulta}">
+								<p:commandLink onclick="PF('alertExcluirEvasao').show()">
+									<p:graphicImage library="imagens" name="botoes/excluirRegistro.png" width="20" height="20" />
+									<f:setPropertyActionListener target="#{evasaoController.evasao}" value="#{evasao}" />
+								</p:commandLink>
+			
+								<p:confirmDialog message="Deseja realmente excluir a evasão selecionada?" header="Exclusão de Evasão" severity="alert" widgetVar="alertExcluirEvasao">
+									<center>
+										<h:commandButton value="SIM">
+											<p:ajax listener="#{evasaoController.excluir}" process="tb:formEvasoes" update="tb:formEvasoes" onsuccess="PF('alertExcluirEvasao').hide()" onerror="redirecionarPaginaLogin()" />
+										</h:commandButton>
+										<p:spacer width="10" />
+										<h:commandButton value="NÃO" onclick="PF('alertExcluirEvasao').hide()" type="button" />
+									</center>
+								</p:confirmDialog>
+							</p:column>
+						</p:dataTable>
+					</p:panel>
+					<br />
+					<h:commandButton value="NOVA EVASÃO" disabled="#{prontuarioController.prontuario == null}" rendered="#{!acessoMenuController.perfilConsulta}">
+						<p:ajax listener="#{evasaoController.cadastrarNova}" update="formCadastroEvasao" onerror="redirecionarPaginaLogin()" />
+					</h:commandButton>
+				</h:form>
+			</p:tab>
+			
+			<p:tab title="Evoluções">
+				<h:form id="formEvolucoes">
+					<p:remoteCommand id="verificarErrosPosPhase" name="verificarErrosPosPhase" update="mensagens" actionListener="#{prontuarioController.verificarErroPesquisa}" />
+				
+					<p:panel header="Lista de Evoluções Cadastradas" style="width:100%;">
+						<br />
+						<p:dataTable id="datatableEvolucao" var="evolucao" rowIndexVar="rowIndex" value="#{evolucaoController.lista}" paginator="true"
+							paginatorAlwaysVisible="false" paginatorPosition="bottom" lazy="true" rows="10" emptyMessage="Não existem evoluções cadastradas para esta pessoa.">
+							<p:ajax event="page" onstart="PF('statusDialog').show()" onsuccess="PF('statusDialog').hide()" onerror="redirecionarPaginaLogin()" />
+							
+							<p:column headerText="Data de Registro" style="width:80px; text-align:center">
+								<h:commandLink>
+									<h:outputText value="#{evolucao.dataRegistro}">
+										<f:convertDateTime pattern="dd/MM/yyyy" />
+									</h:outputText>
+									<p:ajax listener="#{evolucaoController.carregar(evolucao.id)}" process="tb:formEvolucoes" update="formCadastroEvolucao" onerror="redirecionarPaginaLogin()" />
+								</h:commandLink>
+							</p:column>
+							<p:column headerText="Descrição" style="text-align:center">
+								<h:outputText value="#{evolucao.descricaoDataTable}" />
+							</p:column>
+							<p:column headerText="Excluir" style="width:60px; text-align:center" rendered="#{!acessoMenuController.perfilConsulta}">
+								<p:commandLink onclick="PF('alertExcluirEvolucao').show()">
+									<p:graphicImage library="imagens" name="botoes/excluirRegistro.png" width="20" height="20" />
+									<f:setPropertyActionListener target="#{evolucaoController.evolucao}" value="#{evolucao}" />
+								</p:commandLink>
+			
+								<p:confirmDialog message="Deseja realmente excluir a evolução selecionada?" header="Exclusão de Evolução" severity="alert" widgetVar="alertExcluirEvolucao">
+									<center>
+										<h:commandButton value="SIM">
+											<p:ajax listener="#{evolucaoController.excluir}" process="tb:formEvolucoes" update="tb:formEvolucoes" onsuccess="PF('alertExcluirEvolucao').hide()" onerror="redirecionarPaginaLogin()" />
+										</h:commandButton>
+										<p:spacer width="10" />
+										<h:commandButton value="NÃO" onclick="PF('alertExcluirEvolucao').hide()" type="button" />
+									</center>
+								</p:confirmDialog>
+							</p:column>
+						</p:dataTable>
+					</p:panel>
+					<br />
+					<h:commandButton value="NOVA EVOLUÇÃO" disabled="#{prontuarioController.prontuario == null}" rendered="#{!acessoMenuController.perfilConsulta}">
+						<p:ajax listener="#{evolucaoController.cadastrarNova}" update="formCadastroEvolucao" onerror="redirecionarPaginaLogin()" />
+					</h:commandButton>
+				</h:form>
+			</p:tab>
+		</p:tabView>
+		<br />
+		<h:panelGroup layout="block" style="width:100%; text-align:right">
+			<h:form>
+				<h:commandButton value="&lt;&lt; VOLTAR PARA A CONSULTA">
+					<p:ajax listener="#{prontuarioController.voltar}" onerror="redirecionarPaginaLogin()" />
+				</h:commandButton>
+			</h:form>
+		</h:panelGroup>
+	
+		<p:dialog id="novoEnd" widgetVar="novoEndereco" header="Cadastro de Endereço" modal="true" width="600px">
+			<h:form id="formCadastroEndereco">
+				<p:messages id="mensagensCadEndereco" />
+				<p:panelGrid>
+					<p:row>
+						<p:column style="width:10%">
+							<p:outputLabel value="Endereço:" for="endereco" />
+						</p:column>
+						<p:column>
+							<p:inputText value="#{enderecoController.endereco.endereco}" id="endereco" required="true" maxlength="200" style="width:100%" readonly="#{acessoMenuController.perfilConsulta}" />
+						</p:column>
+					</p:row>
+				</p:panelGrid>
+				<br />
+				<h:panelGroup layout="block" style="text-align:right">
+					<h:commandButton value="SALVAR" rendered="#{!acessoMenuController.perfilConsulta}">
+						<p:ajax listener="#{enderecoController.salvar}" process="formCadastroEndereco" update="tb:formEnderecos mensagensCadEndereco" onerror="redirecionarPaginaLogin()" />
+					</h:commandButton>
+					<p:spacer width="10" />
+					<h:commandButton value="FECHAR" type="button" onclick="PF('novoEndereco').hide();" />
+				</h:panelGroup>
+			</h:form>
+		</p:dialog>
+		
+		<p:dialog id="novoCont" widgetVar="novoContato" header="Cadastro de Contato" modal="true">
+			<h:form id="formCadastroContato">
+				<p:messages id="mensagensCadContato" />
+				<p:panelGrid>
+					<p:row>
+						<p:column style="text-align:right; width:30%">
+							<p:outputLabel value="Tipo de Contato:" for="tipoContato" />
+						</p:column>
+						<p:column>
+							<p:selectOneMenu id="tipoContato" value="#{contatoController.tipoContato}" required="true" style="width:30%">
+								<f:selectItem itemLabel="Fixo" itemValue="1" />
+								<f:selectItem itemLabel="Celular" itemValue="2" />
+								<p:ajax render="telefone" update="telefone" />
+							</p:selectOneMenu>
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column style="text-align:right; width:30%">
+							<p:outputLabel value="Telefone:" for="telefone" />
+						</p:column>
+						<p:column>
+							<p:inputMask mask="#{contatoController.mascaraTelefone}" value="#{contatoController.contato.telefone}" id="telefone" required="true" style="width:110px" readonly="#{acessoMenuController.perfilConsulta}" />
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column style="text-align:right; width:30%">
+							<p:outputLabel value="Nome do Contato:" for="nomeContato" />
+						</p:column>
+						<p:column>
+							<p:inputText value="#{contatoController.contato.nomeContato}" id="nomeContato" required="true" maxlength="90" style="width:100%" readonly="#{acessoMenuController.perfilConsulta}" />
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column style="text-align:right; width:30%">
+							<p:outputLabel value="Observações:" for="observacoess" />
+						</p:column>
+						<p:column>
+							<p:inputTextarea value="#{contatoController.contato.observacoes}" id="observacoess" required="true" rows="10" counter="display" 
+								maxlength="200" counterTemplate="{0} caracteres restantes." autoResize="false" cols="50" readonly="#{acessoMenuController.perfilConsulta}" />
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column />
+						<p:column>
+							<h:outputText id="display" />
+						</p:column>
+					</p:row>
+				</p:panelGrid>
+				<br />
+				<h:panelGroup layout="block" style="text-align:right">
+					<h:commandButton value="SALVAR" rendered="#{!acessoMenuController.perfilConsulta}">
+						<p:ajax listener="#{contatoController.salvar}" process="formCadastroContato" update="tb:formContatos mensagensCadContato" onerror="redirecionarPaginaLogin()" />
+					</h:commandButton>
+					<p:spacer width="10" />
+					<h:commandButton value="FECHAR" type="button" onclick="PF('novoContato').hide();" />
+				</h:panelGroup>
+			</h:form>
+		</p:dialog>
+		
+		<p:dialog id="novaAdm" widgetVar="novaAdmissao" header="Cadastro de Admissão" modal="true">
+			<h:form id="formCadastroAdmissao">
+				<p:messages id="mensagensCadAdmissao" />
+				<p:panelGrid>
+					<p:row>
+						<p:column style="text-align:right; width:20%">
+							<p:outputLabel value="Motivo de Admissão:" for="motivoAdmissao" />
+						</p:column>
+						<p:column>
+							<ui:fragment rendered="#{!acessoMenuController.perfilConsulta}">
+								<p:selectOneMenu id="motivoAdmissao" value="#{admissaoController.admissao.motivoAdmissao}" required="true" style="width:50%">
+									<f:selectItem itemLabel="---" noSelectionOption="true" />
+									<f:selectItems value="#{admissaoController.listaMotivosAdmissao}" var="motAdmissao" itemLabel="#{motAdmissao.nome}" itemValue="#{motAdmissao}" />
+								</p:selectOneMenu>
+							</ui:fragment>
+							<ui:fragment rendered="#{acessoMenuController.perfilConsulta}">
+								<p:inputText value="#{admissaoController.admissao.motivoAdmissao.nome}" style="width:70%" readonly="true" />
+							</ui:fragment>
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column style="text-align:right">
+							<p:outputLabel value="Procedência:" for="procedencia" />
+						</p:column>
+						<p:column>
+							<ui:fragment rendered="#{!acessoMenuController.perfilConsulta}">
+								<p:selectOneMenu id="procedencia" value="#{admissaoController.admissao.procedencia}" required="true" style="width:50%">
+									<f:selectItem itemLabel="---" noSelectionOption="true" />
+									<f:selectItems value="#{admissaoController.listaProcedencias}" var="procedencia" itemLabel="#{procedencia.nome}" itemValue="#{procedencia}" />
+								</p:selectOneMenu>
+							</ui:fragment>
+							<ui:fragment rendered="#{acessoMenuController.perfilConsulta}">
+								<p:inputText value="#{admissaoController.admissao.procedencia.nome}" style="width:70%" readonly="true" />
+							</ui:fragment>
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column style="text-align:right">
+							<p:outputLabel value="Observações:" for="observacoes" />
+						</p:column>
+						<p:column>
+							<p:inputTextarea value="#{admissaoController.admissao.observacoes}" id="observacoes" required="true" rows="15" counter="display" 
+								maxlength="1000" counterTemplate="{0} caracteres restantes." autoResize="false" cols="100" readonly="#{acessoMenuController.perfilConsulta}" />
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column />
+						<p:column>
+							<h:outputText id="display" />
+						</p:column>
+					</p:row>
+				</p:panelGrid>
+				<br />
+				<h:panelGroup layout="block" style="text-align:right">
+					<h:commandButton value="SALVAR" rendered="#{!acessoMenuController.perfilConsulta}">
+						<p:ajax listener="#{admissaoController.salvar}" process="formCadastroAdmissao" update="tb:formAdmissoes mensagensCadAdmissao" onerror="redirecionarPaginaLogin()" />
+					</h:commandButton>
+					<p:spacer width="10" />
+					<h:commandButton value="FECHAR" type="button" onclick="PF('novaAdmissao').hide();" />
+				</h:panelGroup>
+			</h:form>
+		</p:dialog>
+		
+		<p:dialog id="novoEnc" widgetVar="novoEncaminhamento" header="Cadastro de Encaminhamento" modal="true">
+			<h:form id="formCadastroEncaminhamento">
+				<p:messages id="mensagensCadEncaminhamento" />
+				<p:panelGrid>
+					<p:row>
+						<p:column style="text-align:right; width:20%">
+							<p:outputLabel value="Motivo de Admissão:" for="motivoAdmissaoEnc" />
+						</p:column>
+						<p:column>
+							<ui:fragment rendered="#{!acessoMenuController.perfilConsulta}">
+								<p:selectOneMenu id="motivoAdmissaoEnc" value="#{encaminhamentoController.encaminhamento.motivoAdmissao}" required="true" style="width:50%">
+									<f:selectItem itemLabel="---" noSelectionOption="true" />
+									<f:selectItems value="#{encaminhamentoController.listaMotivosAdmissao}" var="motAdmissao" itemLabel="#{motAdmissao.nome}" itemValue="#{motAdmissao}" />
+								</p:selectOneMenu>
+							</ui:fragment>
+							<ui:fragment rendered="#{acessoMenuController.perfilConsulta}">
+								<p:inputText value="#{encaminhamentoController.encaminhamento.motivoAdmissao.nome}" style="width:70%" readonly="true" />
+							</ui:fragment>
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column style="text-align:right">
+							<p:outputLabel value="Procedência:" for="procedenciaEnc" />
+						</p:column>
+						<p:column>
+							<ui:fragment rendered="#{!acessoMenuController.perfilConsulta}">
+								<p:selectOneMenu id="procedenciaEnc" value="#{encaminhamentoController.encaminhamento.procedencia}" required="true" style="width:50%">
+									<f:selectItem itemLabel="---" noSelectionOption="true" />
+									<f:selectItems value="#{encaminhamentoController.listaProcedencias}" var="procedencia" itemLabel="#{procedencia.nome}" itemValue="#{procedencia}" />
+								</p:selectOneMenu>
+							</ui:fragment>
+							<ui:fragment rendered="#{acessoMenuController.perfilConsulta}">
+								<p:inputText value="#{encaminhamentoController.encaminhamento.procedencia.nome}" style="width:70%" readonly="true" />
+							</ui:fragment>
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column style="text-align:right">
+							<p:outputLabel value="Observações:" for="observacoesEnc" />
+						</p:column>
+						<p:column>
+							<p:inputTextarea id="observacoesEnc" value="#{encaminhamentoController.encaminhamento.observacoes}" required="true" rows="15" counter="display" 
+								maxlength="1000" counterTemplate="{0} caracteres restantes." autoResize="false" cols="100" readonly="#{acessoMenuController.perfilConsulta}" />
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column />
+						<p:column>
+							<h:outputText id="display" />
+						</p:column>
+					</p:row>
+				</p:panelGrid>
+				<br />
+				<h:panelGroup layout="block" style="text-align:right">
+					<h:commandButton value="SALVAR" rendered="#{!acessoMenuController.perfilConsulta}">
+						<p:ajax listener="#{encaminhamentoController.salvar}" process="formCadastroEncaminhamento" 
+							update="tb:formEncaminhamentos mensagensCadEncaminhamento" onerror="redirecionarPaginaLogin()" />
+					</h:commandButton>
+					<p:spacer width="10" />
+					<h:commandButton value="FECHAR" type="button" onclick="PF('novoEncaminhamento').hide();" />
+				</h:panelGroup>
+			</h:form>
+		</p:dialog>
+		
+		<p:dialog widgetVar="novaReferenciaFamiliar" header="Cadastro de Referência Familiar" modal="true">
+			<h:form id="formCadastroReferenciaFamiliar">
+				<p:messages id="mensagensCadReferenciaFamiliar" />
+				<p:panelGrid>
+					<p:row>
+						<p:column style="text-align:right">
+							<p:outputLabel value="Nome:" for="nomeRefFamiliar" />
+						</p:column>
+						<p:column>
+							<p:inputText id="nomeRefFamiliar" value="#{referenciaFamiliarController.referenciaFamiliar.nome}" style="width:70%" required="true" readonly="#{acessoMenuController.perfilConsulta}" />
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column style="text-align:right">
+							<p:outputLabel value="Data Nascimento:" for="dataNascRefFamiliar" />
+						</p:column>
+						<p:column>
+							<p:inputMask id="dataNascRefFamiliar" mask="99/99/9999" value="#{referenciaFamiliarController.referenciaFamiliar.dataNascimento}" required="true" style="width:80px" readonly="#{acessoMenuController.perfilConsulta}" />
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column style="text-align:right; width:20%">
+							<p:outputLabel value="Tipo Parentesco:" for="tipoParentesco" />
+						</p:column>
+						<p:column>
+							<ui:fragment rendered="#{!acessoMenuController.perfilConsulta}">
+								<p:selectOneMenu id="tipoParentesco" value="#{referenciaFamiliarController.referenciaFamiliar.tipoParentesco}" required="true" style="width:50%">
+									<f:selectItem itemLabel="---" noSelectionOption="true" />
+									<f:selectItems value="#{referenciaFamiliarController.listaTiposParentesco}" var="tipoParentesco" itemLabel="#{tipoParentesco.nome}" itemValue="#{tipoParentesco}" />
+								</p:selectOneMenu>
+							</ui:fragment>
+							<ui:fragment rendered="#{acessoMenuController.perfilConsulta}">
+								<p:inputText value="#{referenciaFamiliarController.referenciaFamiliar.tipoParentesco.nome}" style="width:70%" readonly="true" />
+							</ui:fragment>
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column style="text-align:right">
+							<p:outputLabel value="Observações:" for="observacoesRefFamiliar" />
+						</p:column>
+						<p:column>
+							<p:inputTextarea id="observacoesRefFamiliar" value="#{referenciaFamiliarController.referenciaFamiliar.observacoes}" required="true" rows="15" counter="display" 
+								maxlength="1000" counterTemplate="{0} caracteres restantes." autoResize="false" cols="100" readonly="#{acessoMenuController.perfilConsulta}" />
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column />
+						<p:column>
+							<h:outputText id="display" />
+						</p:column>
+					</p:row>
+				</p:panelGrid>
+				<br />
+				<h:panelGroup layout="block" style="text-align:right">
+					<h:commandButton value="SALVAR" rendered="#{!acessoMenuController.perfilConsulta}">
+						<p:ajax listener="#{referenciaFamiliarController.salvar}" process="formCadastroReferenciaFamiliar" 
+							update="tb:formReferenciaFamiliar mensagensCadReferenciaFamiliar" onerror="redirecionarPaginaLogin()" />
+					</h:commandButton>
+					<p:spacer width="10" />
+					<h:commandButton value="FECHAR" type="button" onclick="PF('novaReferenciaFamiliar').hide();" />
+				</h:panelGroup>
+			</h:form>
+		</p:dialog>
+		
+		<p:dialog widgetVar="novaEvasao" header="Cadastro de Evasões" modal="true">
+			<h:form id="formCadastroEvasao">
+				<p:messages id="mensagensCadEvasao" />
+				<p:panelGrid>
+					<p:row>
+						<p:column style="text-align:right; width:20%">
+							<p:outputLabel value="Motivo de Evasão:" for="motivoEvasao" />
+						</p:column>
+						<p:column>
+							<ui:fragment rendered="#{!acessoMenuController.perfilConsulta}">
+								<p:selectOneMenu id="motivoEvasao" value="#{evasaoController.evasao.motivoEvasao}" required="true" style="width:50%">
+									<f:selectItem itemLabel="---" noSelectionOption="true" />
+									<f:selectItems value="#{evasaoController.listaMotivosEvasao}" var="motEvasao" itemLabel="#{motEvasao.nome}" itemValue="#{motEvasao}" />
+								</p:selectOneMenu>
+							</ui:fragment>
+							<ui:fragment rendered="#{acessoMenuController.perfilConsulta}">
+								<p:inputText value="#{evasaoController.evasao.motivoEvasao.nome}" style="width:70%" readonly="true" />
+							</ui:fragment>
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column style="text-align:right">
+							<p:outputLabel value="Observações:" for="observacoesEvasao" />
+						</p:column>
+						<p:column>
+							<p:inputTextarea id="observacoesEvasao" value="#{evasaoController.evasao.observacoes}" required="true" rows="15" counter="display" 
+								maxlength="1000" counterTemplate="{0} caracteres restantes." autoResize="false" cols="100" readonly="#{acessoMenuController.perfilConsulta}" />
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column />
+						<p:column>
+							<h:outputText id="display" />
+						</p:column>
+					</p:row>
+				</p:panelGrid>
+				<br />
+				<h:panelGroup layout="block" style="text-align:right">
+					<h:commandButton value="SALVAR" rendered="#{!acessoMenuController.perfilConsulta}">
+						<p:ajax listener="#{evasaoController.salvar}" process="formCadastroEvasao" update="tb:formEvasoes mensagensCadEvasao" onerror="redirecionarPaginaLogin()" />
+					</h:commandButton>
+					<p:spacer width="10" />
+					<h:commandButton value="FECHAR" type="button" onclick="PF('novaEvasao').hide();" />
+				</h:panelGroup>
+			</h:form>
+		</p:dialog>
+		
+		<p:dialog widgetVar="novaEvolucao" header="Cadastro de Evoluções" modal="true">
+			<h:form id="formCadastroEvolucao">
+				<p:messages id="mensagensCadEvolucao" />
+				<p:panelGrid>
+					<p:row>
+						<p:column style="text-align:right">
+							<p:outputLabel value="Descrição:" for="descricaoEvolucao" />
+						</p:column>
+						<p:column>
+							<p:inputTextarea id="descricaoEvolucao" value="#{evolucaoController.evolucao.descricao}" required="true" rows="15" counter="display" 
+								maxlength="4000" counterTemplate="{0} caracteres restantes." autoResize="false" cols="100" readonly="#{acessoMenuController.perfilConsulta}" />
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column />
+						<p:column>
+							<h:outputText id="display" />
+						</p:column>
+					</p:row>
+				</p:panelGrid>
+				<br />
+				<h:panelGroup layout="block" style="text-align:right">
+					<h:commandButton value="SALVAR" rendered="#{!acessoMenuController.perfilConsulta}">
+						<p:ajax listener="#{evolucaoController.salvar}" process="formCadastroEvolucao" 
+							update="tb:formEvolucoes mensagensCadEvolucao" onerror="redirecionarPaginaLogin()" />
+					</h:commandButton>
+					<p:spacer width="10" />
+					<h:commandButton value="FECHAR" type="button" onclick="PF('novaEvolucao').hide();" />
+				</h:panelGroup>
+			</h:form>
+		</p:dialog>
+	</ui:define>
+	
+</ui:composition>

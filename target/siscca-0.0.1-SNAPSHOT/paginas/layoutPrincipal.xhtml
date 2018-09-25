@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"  
+    xmlns:f="http://java.sun.com/jsf/core"  
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:siscca="http://java.sun.com/jsf/composite/componentes">
+    
+    <siscca:header />
+    
+    <h:body>
+    	<siscca:menu />
+    	
+    	<div style="top:30px; position:absolute; right:20px">
+	    	<H5>Usuário Logado: <h:outputText value="#{usuarioController.usuarioLogado}" /></H5>
+    	</div>
+    	
+    	<f:view>
+    		<br />
+    		<h3>
+				<h:outputText value="#{textoTituloPagina}"/>
+			</h3>
+    		<p:messages id="mensagens" />
+    		
+    		<div class="chv">
+    		
+    			<p:dialog widgetVar="statusDialog" modal="true" draggable="false" closable="false" resizable="false" showHeader="false">
+				    <p:graphicImage name="/imagens/loadings/ajax-loader.gif" />
+				</p:dialog>
+		    
+		    	<ui:insert name="conteudo" />
+		    	
+		    	<!-- Caixa de dialogo para alterar a senha -->
+		    	<p:dialog widgetVar="alteracaoSenha" header="Alteração de Senha" modal="true" visible="false" width="400px" resizable="false">
+					<h:form id="form">
+						<p:messages id="mensagensAlteracao" />
+						<p:focus for="login" />
+						<p:panelGrid>
+							<p:row>
+								<p:column style="text-align:right">
+									<p:outputLabel value="Login:" for="login" />
+								</p:column>
+								<p:column>
+									<p:inputText value="#{alteracaoSenhaController.login}" id="login" required="true" maxlength="30" disabled="true" />
+								</p:column>
+							</p:row>
+							<p:row>
+								<p:column style="text-align:right">
+									<p:outputLabel value="Senha Atual:" for="senhaAtual" />
+								</p:column>
+								<p:column>
+									<p:password value="#{alteracaoSenhaController.senhaAtual}" id="senhaAtual" required="true" maxlength="30" redisplay="true" />
+								</p:column>
+							</p:row>
+							<p:row>
+								<p:column style="text-align:right">
+									<p:outputLabel value="Nova Senha:" for="novaSenha" />
+								</p:column>
+								<p:column>
+									<p:password value="#{alteracaoSenhaController.novaSenha}" id="novaSenha" required="true" maxlength="30" redisplay="true" />
+								</p:column>
+							</p:row>
+							<p:row>
+								<p:column style="text-align:right">
+									<p:outputLabel value="Confirmação de Nova Senha:" for="confirmacaoNovaSenha" />
+								</p:column>
+								<p:column>
+									<p:password value="#{alteracaoSenhaController.confirmacaoNovaSenha}" id="confirmacaoNovaSenha" required="true" maxlength="30" redisplay="true" />
+								</p:column>
+							</p:row>
+						</p:panelGrid>
+						<br />
+						<h:panelGroup layout="block" style="text-align:center">
+							<h:commandButton value="ALTERAR">
+								<p:ajax listener="#{alteracaoSenhaController.alterar}" process="form" update="mensagensAlteracao form" onerror="redirecionarPaginaLogin()" />
+							</h:commandButton>
+							<p:spacer width="10" />
+							<h:commandButton value="CANCELAR" type="button" onclick="PF('alteracaoSenha').hide();" />
+						</h:panelGroup>
+					</h:form>
+				</p:dialog>
+    		</div>
+    	</f:view>
+    </h:body>
+</html>

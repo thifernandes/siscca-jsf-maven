@@ -1,0 +1,35 @@
+<ui:component xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:f="http://java.sun.com/jsf/core" xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:cc="http://java.sun.com/jsf/composite"
+	xmlns:p="http://primefaces.org/ui">
+	
+	<cc:interface shortDescription="Menu da aplicacao." />
+	
+	<cc:implementation>
+		<h:form>	
+			<p:menubar>
+				<p:menuitem value="Início" url="/paginas/paginaPrincipal.xhtml"/>
+				<p:submenu label="Prontuário">
+					<p:menuitem value="Consultar" url="/paginas/prontuario/consultar.xhtml" />
+				</p:submenu>
+				<p:submenu label="Administração" rendered="#{acessoMenuController.perfilAdministrador()}">
+					<p:menuitem value="Deficiência" url="/paginas/deficiencia/manter.xhtml" />
+					<p:menuitem value="Grau Instrução" url="/paginas/grauinstrucao/manter.xhtml" />
+					<p:menuitem value="Motivo de Admissão" url="/paginas/motivoadmissao/manter.xhtml" />
+					<p:menuitem value="Motivo de Evasão" url="/paginas/motivoevasao/manter.xhtml" />
+					<p:menuitem value="Órgão" url="/paginas/orgao/manter.xhtml" />
+					<p:menuitem value="Procedência" url="/paginas/procedencia/manter.xhtml" />
+					<p:menuitem value="Rede de Referência" url="/paginas/redereferencia/manter.xhtml" />
+					<p:menuitem value="Tipo de Parentesco" url="/paginas/tipoparentesco/manter.xhtml" />
+					<p:menuitem value="Usuário" url="/paginas/usuario/manter.xhtml" />
+				</p:submenu>
+				<p:menuitem action="#{alteracaoSenhaController.init}" value="Alterar Senha" />
+				<p:menuitem action="#{loginController.sair}" value="Sair" />
+			</p:menubar>
+		</h:form>
+		<div style="top:0px; position:absolute; right:20px">
+			<H6>Versão: 1.0</H6>
+		</div>
+	</cc:implementation>
+</ui:component>

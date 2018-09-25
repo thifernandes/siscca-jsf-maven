@@ -1,0 +1,98 @@
+<web-app xmlns="http://xmlns.jcp.org/xml/ns/javaee"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd"
+         version="3.1">
+	
+	<display-name>SisCCA - Sistema de Cadastro de Crianças e Adolescentes</display-name>
+	
+	<welcome-file-list>
+		<welcome-file>index.xhtml</welcome-file>
+	</welcome-file-list>
+	
+	<context-param>
+		<description>
+			The location where state information is saved.
+			Valid values are 'server' (typically saved in HttpSession) and 'client' (typically
+			saved as a hidden field in the form.
+			Default is server.
+		</description>
+		<param-name>javax.faces.STATE_SAVING_METHOD</param-name>
+		<param-value>server</param-value>
+	</context-param>
+	<context-param>
+		<description>
+			Comma-delimited list of context-relative resource paths under which the JSF implementation
+			will look for application configuration resources, before loading a configuration resource
+			named /WEB-INF/faces-config.xml (if such a resource exists).
+		</description>
+		<param-name>javax.faces.CONFIG_FILES</param-name>
+		<param-value></param-value>
+	</context-param>
+	<context-param>
+		<description>
+			The default suffix for extension-mapped resources that contain JSF components.
+			Default is '.jsp'.
+		</description>
+		<param-name>javax.faces.DEFAULT_SUFFIX</param-name>
+		<param-value>.xhtml</param-value>
+	</context-param>
+	<context-param>
+		<description>
+			A human readable string describing where this particular JSF application is
+			in the software development lifecycle.
+			Valid values are 'Development', 'UnitTest', 'SystemTest' and 'Production'.
+			Default is 'Production'.
+			This parameter is not available in JSF 1.x.
+		</description>
+		<param-name>javax.faces.PROJECT_STAGE</param-name>
+		<param-value>Development</param-value>
+	</context-param>
+	<context-param>
+		<description>
+			Monitors Faces JSP files for modifications and synchronizes a running server with
+			the changes without restarting the server. If this parameter is set to false or
+			removed from the deployment descriptor, any changes made to Faces JSP files may
+			not be seen by the server until it is restarted. This parameter is usually set
+			to true while the Faces JSP files are being developed and debugged in order to
+			improve the performance of the development environment.
+		</description>
+		<param-name>com.ibm.ws.jsf.JSP_UPDATE_CHECK</param-name>
+		<param-value>true</param-value>
+	</context-param>
+	<context-param>
+		<description>
+			Load JSF runtime when the application server starts up. If this parameter is set to false or removed,
+			JSF runtime will be loaded and initialized when the first JSF request is processed.
+			This may disable custom JSF extensions, such as factories defined in the project.
+		</description>
+		<param-name>com.ibm.ws.jsf.LOAD_FACES_CONFIG_AT_STARTUP</param-name>
+		<param-value>true</param-value>
+	</context-param>
+	<servlet>
+		<servlet-name>Faces Servlet</servlet-name>
+		<servlet-class>javax.faces.webapp.FacesServlet</servlet-class>
+		<load-on-startup>-1</load-on-startup>
+		<enabled>true</enabled>
+		<async-supported>false</async-supported>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>Faces Servlet</servlet-name>
+		<url-pattern>*.xhtml</url-pattern>
+	</servlet-mapping>
+	
+	<!-- Filter -->
+    <filter>
+        <filter-name>LoginFilter</filter-name>
+        <filter-class>br.com.siscca.infra.seguranca.LoginFilter</filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>LoginFilter</filter-name>
+        <url-pattern>/paginas/*</url-pattern>
+    </filter-mapping>
+    
+    <!-- Timeout da sessao logada (tempo em minutos) -->
+    <session-config>
+		<session-timeout>30</session-timeout>
+    </session-config>
+    
+</web-app>
